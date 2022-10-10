@@ -1,5 +1,5 @@
+import string
 from string import punctuation
-
 
 STOP_WORDS = [
     'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'he',
@@ -8,37 +8,39 @@ STOP_WORDS = [
 ]
 
 
-
-
 def print_word_freq(file):
-    text_file = open(file)
-    data = text_file.read()
-    data_list = data.split('\n')
-    text_file.close()
-    """print (data.lower())"""
-    """Read in `file` and print out the frequency of words in that file."""
-    print(data_list)
-    
-    import string
+    # open the file
+    with open(file, 'r') as file:
+        file_text = file.read()
+        words = file_text.split()
+        table = str.maketrans("", "", string.punctuation)
+        stripped_words = [w.translate(table) for w in words]
+        # print(stripped_words)
 
-    clean_words = []
-    for word in data_list:
-        for letter in word:
-            if letter in string.punctuation:
-                word = word.replace(letter,"")
-        clean_words.append(word)
+        lower_words = []
+        for word in stripped_words:
+            lower_words.append(word.lower())
 
-    print (clean_words)
+        # print(lower_words)
 
-    squeaky_words = []
-    for word in clean_words:
-        squeaky_words.append(word.lower())
+        new_list = [word for word in lower_words if word not in STOP_WORDS]
 
-    print (", ".join(squeaky_words))
+    word_dict = {}
+    for word in new_list:
+        if word not in word_dict:
+            word_dict[word] = 1
+        word_dict[word] += 1
+    # print(word_dict)
 
-"""So this gets the txt file into list of strings. It is all lower case and most
-of the punctuation is taken out (still having trouble with some commas). Still need
-to remove the stop words and count/print frequency"""
+    word_list = sorted(word_dict.items(), key=lambda x: x[1], reverse=True)
+    sort_list = dict(word_list)
+    for (key, value) in sort_list.items():
+        star_mark = ''
+        i = 0
+        while i < value:
+            star_mark += '*'
+            i += 1
+        print(f'{key} |'.rjust(20), value, star_mark)
 
 
 if __name__ == "__main__":
